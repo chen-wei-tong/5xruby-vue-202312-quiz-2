@@ -2,7 +2,7 @@
 import { ref, computed, watch } from 'vue';
 import "bootstrap/dist/css/bootstrap.css";
 import '@fortawesome/fontawesome-free/css/all.css';
-
+import SearchText from "./components/search.vue"
 // 修改這份 YouBike 即時資訊表：
 // 1. 將搜尋的部分拆出來變成子元件 `uBikeTable/components/search.vue`
 // 2. 將表格的部分拆出來變成子元件 `uBikeTable/components/uBikeTable.vue`
@@ -17,6 +17,8 @@ import '@fortawesome/fontawesome-free/css/all.css';
 // lat：緯度、 lng：經度、 ar：地(中文)、 sareaen：場站區域(英文)、
 // snaen：場站名稱(英文)、 aren：地址(英文)、 bemp：空位數量、 act：全站禁用狀態
 
+
+
 // 目前的排序選項
 const currentSort = ref('sno');
 // 是否為降冪排序
@@ -25,7 +27,7 @@ const isSortDesc = ref(false);
 // 所有站點資料
 const uBikeStops = ref([]);
 // 搜尋文字
-const searchText = ref('');
+// const searchText = ref('');
 // 目前頁碼
 const currentPage = ref(1);
 // 一頁幾筆資料
@@ -40,16 +42,12 @@ fetch('https://tcgbusfs.blob.core.windows.net/dotapp/youbike/v2/youbike_immediat
     uBikeStops.value = JSON.parse(data);
   });
 
-// 監聽搜尋文字，若有變動則將頁碼回歸第一頁
-watch(searchText, () => {
-  currentPage.value = 1;
-});
 
 // 篩選後的站點資料
 const filtedUbikeStops = computed(() => {
   return uBikeStops.value.length === 0
     ? []
-    : uBikeStops.value.filter(d => d.sna.includes(searchText.value));
+    : uBikeStops.value.filter(d => d.sna.includes(text.value));
 });
 
 // 排序後的站點資料
@@ -117,18 +115,25 @@ const setSort = sortType => {
 
 // 關鍵字 Highlight
 const keywordsHighlight = (text, keyword) => {
-  if(keyword === '') return text;
+  if (keyword === '') return text;
   const reg = new RegExp(keyword, 'gi');
   return text.replace(reg, `<span style="color: red;">${keyword}</span>`);
 };
+
+const text = ref('');
+const searchText = val => {
+  text.value = val;
+}
+// 監聽搜尋文字，若有變動則將頁碼回歸第一頁
+watch(text, (newValue, oldValue) => {
+  console.log('newValue', newValue, oldValue)
+  currentPage.value = 1;
+});
 </script>
 
 <template>
   <div class="app">
-    <p>
-      站點名稱搜尋: <input class="border" type="text" v-model="searchText">
-    </p>
-
+    <SearchText :text="text" @searchText="searchText" />
     <table class="table table-striped">
       <thead>
         <tr>
@@ -165,7 +170,7 @@ const keywordsHighlight = (text, keyword) => {
         <!-- 替換成 slicedUbikeStops -->
         <tr v-for="s in slicedUbikeStops" :key="s.sno">
           <td>{{ s.sno }}</td>
-          <td v-html="keywordsHighlight(s.sna, searchText)"></td>
+          <td v-html="keywordsHighlight(s.sna, text)"></td>
           <td>{{ s.sarea }}</td>
           <td>{{ s.sbi }}</td>
           <td>{{ s.tot }}</td>
@@ -205,18 +210,24 @@ const keywordsHighlight = (text, keyword) => {
 .app {
   padding: 1rem;
 }
+
 .pointer {
   cursor: pointer;
 }
+
 .pagination {
   display: flex;
   justify-content: center;
 }
+
 @media (max-width: 768px) {
   .sno {
-    max-width: 50px; word-wrap: break-word;
+    max-width: 50px;
+    word-wrap: break-word;
   }
-  .table td, .table th {
+
+  .table td,
+  .table th {
     padding: .5rem .25rem;
   }
 }
