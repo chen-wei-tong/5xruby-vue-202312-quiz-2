@@ -3,6 +3,7 @@ import { ref, computed, watch } from 'vue';
 import "bootstrap/dist/css/bootstrap.css";
 import '@fortawesome/fontawesome-free/css/all.css';
 import SearchText from "./components/search.vue"
+import uBikeTable from "./components/uBikeTable.vue"
 // 修改這份 YouBike 即時資訊表：
 // 1. 將搜尋的部分拆出來變成子元件 `uBikeTable/components/search.vue`
 // 2. 將表格的部分拆出來變成子元件 `uBikeTable/components/uBikeTable.vue`
@@ -114,11 +115,11 @@ const setSort = sortType => {
 };
 
 // 關鍵字 Highlight
-const keywordsHighlight = (text, keyword) => {
-  if (keyword === '') return text;
-  const reg = new RegExp(keyword, 'gi');
-  return text.replace(reg, `<span style="color: red;">${keyword}</span>`);
-};
+// const keywordsHighlight = (text, keyword) => {
+//   if (keyword === '') return text;
+//   const reg = new RegExp(keyword, 'gi');
+//   return text.replace(reg, `<span style="color: red;">${keyword}</span>`);
+// };
 
 const text = ref('');
 const searchText = val => {
@@ -134,7 +135,8 @@ watch(text, (newValue, oldValue) => {
 <template>
   <div class="app">
     <SearchText :text="text" @searchText="searchText" />
-    <table class="table table-striped">
+    <uBikeTable  :slicedUbikeStops="slicedUbikeStops" @setSort="setSort"/>
+    <!-- <table class="table table-striped">
       <thead>
         <tr>
           <th @click="setSort('sno')">
@@ -167,7 +169,7 @@ watch(text, (newValue, oldValue) => {
         </tr>
       </thead>
       <tbody>
-        <!-- 替換成 slicedUbikeStops -->
+        
         <tr v-for="s in slicedUbikeStops" :key="s.sno">
           <td>{{ s.sno }}</td>
           <td v-html="keywordsHighlight(s.sna, text)"></td>
@@ -177,7 +179,7 @@ watch(text, (newValue, oldValue) => {
           <td>{{ (s.mday) }}</td>
         </tr>
       </tbody>
-    </table>
+    </table> -->
   </div>
 
   <!-- 頁籤 -->
