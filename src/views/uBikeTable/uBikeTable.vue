@@ -190,6 +190,7 @@ watch(text, (newValue, oldValue) => {
   <!-- 頁籤 -->
   <pagination
     :pagerEnd="pagerEnd"
+    :PAGINATION_MAX="PAGINATION_MAX"
     :currentPage="currentPage"
     :pagerAddAmount="pagerAddAmount"
     :totalPageCount="totalPageCount"

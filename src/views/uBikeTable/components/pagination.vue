@@ -2,6 +2,7 @@
 import { ref, computed, defineProps, defineEmits } from "vue";
 const props = defineProps([
   "pagerEnd",
+  "PAGINATION_MAX",
   "currentPage",
   "uBikeTablePage",
   "totalPageCount",
@@ -11,9 +12,9 @@ const emit = defineEmits(["setPage"]);
 // 目前頁碼
 // const currentPage = ref(1);
 // 一頁幾筆資料
-const COUNT_OF_PAGE = 20;
+// const COUNT_OF_PAGE = 20;
 // 頁碼最多顯示幾頁
-const PAGINATION_MAX = 10;
+// const PAGINATION_MAX = 10;
 
 // 分頁的位移，用來確保目前的頁碼固定出現在中間
 const pagerAddAmount = computed(() => {
@@ -25,21 +26,21 @@ const pagerAddAmount = computed(() => {
   );
   console.log("currentPage", props.currentPage);
   const tmp =
-    props.totalPageCount <= PAGINATION_MAX
+    props.totalPageCount <= props.PAGINATION_MAX
       ? 0
       : props.currentPage + 4 - pagerEnd.value;
   return tmp <= 0
     ? 0
-    : props.totalPageCount - (PAGINATION_MAX + tmp) < 0
-    ? props.totalPageCount - PAGINATION_MAX
+    : props.totalPageCount - (props.PAGINATION_MAX + tmp) < 0
+    ? props.totalPageCount - props.PAGINATION_MAX
     : tmp;
 });
 
 // 分頁的尾端
 const pagerEnd = computed(() => {
-  return props.totalPageCount <= PAGINATION_MAX
+  return props.totalPageCount <= props.PAGINATION_MAX
     ? props.totalPageCount
-    : PAGINATION_MAX;
+    : props.PAGINATION_MAX;
 });
 
 // 換頁

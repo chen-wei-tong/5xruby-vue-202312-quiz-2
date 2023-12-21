@@ -28,51 +28,6 @@ const keywordsHighlight = (text, keyword) => {
   const reg = new RegExp(keyword, "gi");
   return text.replace(reg, `<span style="color: red;">${keyword}</span>`);
 };
-
-//   get: () => {
-//     return (sortType) => {
-//       console.log("text", props.text);
-//       if (sortType === currentSort.value) {
-//         isSortDesc.value = !isSortDesc.value;
-//         console.log(isSortDesc.value);
-//       } else {
-//         currentSort.value = sortType;
-//         isSortDesc.value = false;
-//         console.log(currentSort.value);
-//       }
-//     };
-//   },
-//   set: (val) => {
-//     sortedUbikeStops.value = val;
-//     console.log(sortedUbikeStops.value);
-//     console.log("sortedUbikeStops", "filtedUbikeStops", val);
-//   },
-// });
-
-// 篩選後的站點資料
-// const filtedUbikeStops = computed(() => {
-//   return uBikeStops.value.length === 0
-//     ? []
-//     : uBikeStops.value.filter((d) => d.sna.includes(text.value));
-// });
-
-// 排序後的站點資料
-// const sortedUbikeStops = computed(() => {
-//   const filtedStops = [...filtedUbikeStops.value];
-//   return isSortDesc.value
-//     ? filtedStops.sort((a, b) => b[props.currentSort] - a[props.currentSort])
-//     : filtedStops.sort((a, b) => a[props.currentSort] - b[props.currentSort]);
-// });
-
-// 分頁後的站點資料
-// const slicedUbikeStops = computed(() => {
-//   const start = (currentPage.value - 1) * COUNT_OF_PAGE;
-//   const end =
-//     start + COUNT_OF_PAGE <= sortedUbikeStops.value.length
-//       ? start + COUNT_OF_PAGE
-//       : sortedUbikeStops.value.length;
-//   return sortedUbikeStops.value.slice(start, end);
-// });
 </script>
 <template>
   <table class="table table-striped">
@@ -83,7 +38,7 @@ const keywordsHighlight = (text, keyword) => {
           <span v-show="props.currentSort === 'sno'">
             <i
               class="fa"
-              :class="isSortDesc ? 'fa-sort-desc' : 'fa-sort-asc'"
+              :class="props.isSortDesc ? 'fa-sort-desc' : 'fa-sort-asc'"
               aria-hidden="true"
             ></i>
           </span>
