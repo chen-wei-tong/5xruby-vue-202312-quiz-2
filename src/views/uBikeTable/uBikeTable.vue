@@ -1,15 +1,15 @@
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch } from "vue";
 import "bootstrap/dist/css/bootstrap.css";
-import '@fortawesome/fontawesome-free/css/all.css';
-import SearchText from "./components/search.vue"
-import uBikeTable from "./components/uBikeTable.vue"
+import "@fortawesome/fontawesome-free/css/all.css";
+import SearchText from "./components/search.vue";
+import uBikeTable from "./components/uBikeTablePage.vue";
+import pagination from "./components/pagination.vue";
 // 修改這份 YouBike 即時資訊表：
 // 1. 將搜尋的部分拆出來變成子元件 `uBikeTable/components/search.vue`
 // 2. 將表格的部分拆出來變成子元件 `uBikeTable/components/uBikeTable.vue`
 // 3. 將分頁的部分拆出來變成子元件 `uBikeTable/components/pagination.vue`
 // 4. 再將它們組合起來
-
 
 // 欄位說明:
 // https://data.taipei/dataset/detail?id=c6bc8aed-557d-41d5-bfb1-8da24f78f2fb
@@ -18,10 +18,8 @@ import uBikeTable from "./components/uBikeTable.vue"
 // lat：緯度、 lng：經度、 ar：地(中文)、 sareaen：場站區域(英文)、
 // snaen：場站名稱(英文)、 aren：地址(英文)、 bemp：空位數量、 act：全站禁用狀態
 
-
-
 // 目前的排序選項
-const currentSort = ref('sno');
+const currentSort = ref("sno");
 // 是否為降冪排序
 const isSortDesc = ref(false);
 
@@ -36,19 +34,19 @@ const COUNT_OF_PAGE = 20;
 // 頁碼最多顯示幾頁
 const PAGINATION_MAX = 10;
 
-
-fetch('https://tcgbusfs.blob.core.windows.net/dotapp/youbike/v2/youbike_immediate.json')
-  .then(res => res.text())
-  .then(data => {
+fetch(
+  "https://tcgbusfs.blob.core.windows.net/dotapp/youbike/v2/youbike_immediate.json"
+)
+  .then((res) => res.text())
+  .then((data) => {
     uBikeStops.value = JSON.parse(data);
   });
-
 
 // 篩選後的站點資料
 const filtedUbikeStops = computed(() => {
   return uBikeStops.value.length === 0
     ? []
-    : uBikeStops.value.filter(d => d.sna.includes(text.value));
+    : uBikeStops.value.filter((d) => d.sna.includes(text.value));
 });
 
 // 排序後的站點資料
@@ -59,7 +57,6 @@ const sortedUbikeStops = computed(() => {
     ? filtedStops.sort((a, b) => b[currentSort.value] - a[currentSort.value])
     : filtedStops.sort((a, b) => a[currentSort.value] - b[currentSort.value]);
 });
-
 
 // 分頁後的站點資料
 const slicedUbikeStops = computed(() => {
@@ -92,12 +89,12 @@ const pagerAddAmount = computed(() => {
   return tmp <= 0
     ? 0
     : totalPageCount.value - (PAGINATION_MAX + tmp) < 0
-      ? totalPageCount.value - PAGINATION_MAX
-      : tmp;
+    ? totalPageCount.value - PAGINATION_MAX
+    : tmp;
 });
 
 // 換頁
-const setPage = page => {
+const setPage = (page) => {
   if (page < 1 || page > totalPageCount.value) {
     return;
   }
@@ -105,29 +102,29 @@ const setPage = page => {
 };
 
 // 指定排序
-const setSort = sortType => {
-  if (sortType === currentSort.value) {
-    isSortDesc.value = !isSortDesc.value;
-  } else {
-    currentSort.value = sortType;
-    isSortDesc.value = false;
-  }
-};
-
-// 關鍵字 Highlight
-// const keywordsHighlight = (text, keyword) => {
-//   if (keyword === '') return text;
-//   const reg = new RegExp(keyword, 'gi');
-//   return text.replace(reg, `<span style="color: red;">${keyword}</span>`);
+// const setSort = sortType => {
+//   if (sortType === currentSort.value) {
+//     isSortDesc.value = !isSortDesc.value;
+//   } else {
+//     currentSort.value = sortType;
+//     isSortDesc.value = false;
+//   }
 // };
 
-const text = ref('');
-const searchText = val => {
+// 關鍵字 Highlight
+const keywordsHighlight = (text, keyword) => {
+  if (keyword === '') return text;
+  const reg = new RegExp(keyword, 'gi');
+  return text.replace(reg, `<span style="color: red;">${keyword}</span>`);
+};
+
+const text = ref("");
+const searchText = (val) => {
   text.value = val;
-}
+};
 // 監聽搜尋文字，若有變動則將頁碼回歸第一頁
 watch(text, (newValue, oldValue) => {
-  console.log('newValue', newValue, oldValue)
+  console.log("newValue", newValue, oldValue);
   currentPage.value = 1;
 });
 </script>
@@ -135,7 +132,7 @@ watch(text, (newValue, oldValue) => {
 <template>
   <div class="app">
     <SearchText :text="text" @searchText="searchText" />
-    <uBikeTable  :slicedUbikeStops="slicedUbikeStops" @setSort="setSort"/>
+    <uBikeTable :text="text" :slicedUbikeStops="slicedUbikeStops" @setSort="setSort" @keywordsHighlight="keywordsHighlight"/>
     <!-- <table class="table table-striped">
       <thead>
         <tr>
@@ -183,7 +180,14 @@ watch(text, (newValue, oldValue) => {
   </div>
 
   <!-- 頁籤 -->
-  <nav v-if="pagerEnd > 0">
+  <pagination
+    :pagerEnd="pagerEnd"
+    :currentPage="currentPage"
+    :pagerAddAmount="pagerAddAmount"
+    :totalPageCount="totalPageCount"
+    @setPage="setPage"
+  />
+  <!-- <nav v-if="pagerEnd > 0">
     <ul class="pagination">
 
       <li @click.prevent="setPage(1)" class="page-item">
@@ -205,7 +209,7 @@ watch(text, (newValue, oldValue) => {
         <a class="page-link" href>最末頁</a>
       </li>
     </ul>
-  </nav>
+  </nav> -->
 </template>
 
 <style lang="scss" scoped>
@@ -230,7 +234,7 @@ watch(text, (newValue, oldValue) => {
 
   .table td,
   .table th {
-    padding: .5rem .25rem;
+    padding: 0.5rem 0.25rem;
   }
 }
 </style>

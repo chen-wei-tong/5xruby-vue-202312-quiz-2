@@ -10,7 +10,7 @@ const text = computed({
         // 通知父層更新
         emit('searchText', val);
     }
-})
+});
 </script>
 <template>
     <p>
