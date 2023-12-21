@@ -102,19 +102,19 @@ const setPage = (page) => {
 };
 
 // 指定排序
-// const setSort = sortType => {
-//   if (sortType === currentSort.value) {
-//     isSortDesc.value = !isSortDesc.value;
-//   } else {
-//     currentSort.value = sortType;
-//     isSortDesc.value = false;
-//   }
-// };
+const setSort = sortType => {
+  if (sortType === currentSort.value) {
+    isSortDesc.value = !isSortDesc.value;
+  } else {
+    currentSort.value = sortType;
+    isSortDesc.value = false;
+  }
+};
 
 // 關鍵字 Highlight
 const keywordsHighlight = (text, keyword) => {
-  if (keyword === '') return text;
-  const reg = new RegExp(keyword, 'gi');
+  if (keyword === "") return text;
+  const reg = new RegExp(keyword, "gi");
   return text.replace(reg, `<span style="color: red;">${keyword}</span>`);
 };
 
@@ -132,7 +132,15 @@ watch(text, (newValue, oldValue) => {
 <template>
   <div class="app">
     <SearchText :text="text" @searchText="searchText" />
-    <uBikeTable :text="text" :slicedUbikeStops="slicedUbikeStops" @setSort="setSort" @keywordsHighlight="keywordsHighlight"/>
+    <uBikeTable
+      :text="text"
+      :currentSort="currentSort"
+      :isSortDesc="isSortDesc"
+      :filtedUbikeStops="filtedUbikeStops"
+      :slicedUbikeStops="slicedUbikeStops"
+      @setSort="setSort"
+      @keywordsHighlight="keywordsHighlight"
+    />
     <!-- <table class="table table-striped">
       <thead>
         <tr>
