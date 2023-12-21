@@ -19,13 +19,23 @@ const gameInit = () => {
   openedCard.value = [];
 };
 
+const clickCount = ref(0);
+
 const clickHandler = (idx) => {
   openedCard.value.push(idx);
 
-  // 一秒後將 openedCard 清空 (牌面覆蓋回去)
-  window.setTimeout(() => {
+  clickCount.value++;
+  console.log("Click Count:", clickCount.value);
+  if(clickCount.value > 2){
     openedCard.value = [];
-  }, 1000);
+    clickCount.value = 0
+  }
+  console.log("idx",idx)
+  console.log("openedCard",openedCard.value)
+  // 一秒後將 openedCard 清空 (牌面覆蓋回去)
+  // window.setTimeout(() => {
+  //   openedCard.value = [];
+  // }, 1000);
 };
 </script>
 
@@ -43,7 +53,7 @@ const clickHandler = (idx) => {
     <div
       class="rounded-xl mx-auto border-4 mt-12 grid grid-flow-col p-10 w-[900px] gap-2 grid-rows-4"
     >
-    <MatchCard :cards="cards" :openedCard="openedCard" @clickHandler="clickHandler"/>
+    <MatchCard :cards="cards" :openedCard="openedCard" @clickHandler="clickHandler" @gameInit="gameInit"/>
       <!-- <div
         v-for="(n, idx) in cards"
         class="flip-card"

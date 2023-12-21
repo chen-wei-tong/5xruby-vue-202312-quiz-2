@@ -1,29 +1,14 @@
 <script setup>
-import { watch } from "vue";
+import { ref, watch } from "vue";
 const props = defineProps(["cards", "openedCard"]);
-const emit = defineEmits(["clickHandler"]);
-const clickHandler = (val) => {
-  emit("clickHandler", val);
-  console.log(val);
-  // if (newidx = oldidx){
-  //   console.log("yes")
-  // }
-};
-// watch(clickHandler(idx), (newValue, oldValue) => {
-//   console.log("newValue", newValue, oldValue);
+const emit = defineEmits(["clickHandler", "gameInit"]);
 
-// });
-// const clickHandler = computed({
-//   get: () => props.cards,
-//   set: (idx) => {
-//     // 通知父層更新
-//     emit("clickHandler", idx);
-//   },
-// });
+const clickHandler = (idx) => {
+  emit("clickHandler", idx);
+  console.log("clickHandler", idx);
+};
 </script>
 <template>
-  {{ props.cards }}<br />
-  {{ props.openedCard }}<br />
   <div
     v-for="(n, idx) in cards"
     class="flip-card"
@@ -43,4 +28,10 @@ const clickHandler = (val) => {
   </div>
 </template>
 
-<style scoped src="../MatchGame.css"></style>
+<style scoped src="../MatchGame.css">
+</style>
+<style scoped>
+.match {
+  background: #000;
+}
+</style>
