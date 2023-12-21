@@ -6,6 +6,7 @@ const emit = defineEmits(["clickHandler", "gameInit"]);
 const clickHandler = (idx) => {
   emit("clickHandler", idx);
   console.log("clickHandler", idx);
+  console.log("props.cards[idx]",props.cards[idx])
 };
 </script>
 <template>

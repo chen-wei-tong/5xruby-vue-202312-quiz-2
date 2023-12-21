@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import MatchCard from "./components/MatchCard.vue";
 // 試完成以下功能：
 //  1. 點擊卡片，卡片會翻開 (已完成)
@@ -20,18 +20,40 @@ const gameInit = () => {
 };
 
 const clickCount = ref(0);
+const firstClick = ref(null);
+const secondClick = ref('');
 
 const clickHandler = (idx) => {
   openedCard.value.push(idx);
 
   clickCount.value++;
   console.log("Click Count:", clickCount.value);
-  if(clickCount.value > 2){
+
+  
+  if (!firstClick.value) {
+      firstClick.value = cards.value[idx];
+      console.log("按第1次", firstClick.value);
+    } else {
+      secondClick.value = cards.value[idx];
+      console.log("按第2次", secondClick.value);
+      if(firstClick.value === secondClick.value ){
+      // 重置 firstClick
+      firstClick.value = null;
+      alert("OKOK")
+      }
+    }
+
+
+  if (clickCount.value >= 3) {
+    //點到相同卡片會消失
+
+
+    //點到不同卡片翻回正面
     openedCard.value = [];
-    clickCount.value = 0
+    clickCount.value = 0;
   }
-  console.log("idx",idx)
-  console.log("openedCard",openedCard.value)
+  console.log("idx", cards.value[idx]);
+  console.log("openedCard", openedCard.value);
   // 一秒後將 openedCard 清空 (牌面覆蓋回去)
   // window.setTimeout(() => {
   //   openedCard.value = [];
@@ -53,7 +75,12 @@ const clickHandler = (idx) => {
     <div
       class="rounded-xl mx-auto border-4 mt-12 grid grid-flow-col p-10 w-[900px] gap-2 grid-rows-4"
     >
-    <MatchCard :cards="cards" :openedCard="openedCard" @clickHandler="clickHandler" @gameInit="gameInit"/>
+      <MatchCard
+        :cards="cards"
+        :openedCard="openedCard"
+        @clickHandler="clickHandler"
+        @gameInit="gameInit"
+      />
       <!-- <div
         v-for="(n, idx) in cards"
         class="flip-card"
